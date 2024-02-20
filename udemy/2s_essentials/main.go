@@ -1,22 +1,27 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math"
+	"os"
+	"strconv"
 )
 
-func main() {
-	var option int
-	fmt.Println("Choose an option: 1) Invest calculator 2) Profit calculator 3) Exit")
-	fmt.Scan(&option)
+const inflationRate = 2.5
 
-	switch option {
-	case 1:
-		investCalculator()
-	case 2:
-		profitCalculator()
+func getValueFormFile() (float64, error) {
+	data, err := os.ReadFile("profit.txt")
+	if err != nil {
+		return 0, errors.New("Profit file not found!!!!!")
 	}
+	value, _ := strconv.ParseFloat(string(data), 64)
+	return value, nil
+}
 
+func wirteValueToFile(value float64) {
+	valueText := fmt.Sprintf("%.2f", value)
+	os.WriteFile("profit.txt", []byte(valueText), 0644)
 }
 
 func profitCalculator() {
@@ -26,6 +31,14 @@ func profitCalculator() {
 	var ebt float64 // Earnings before tax
 	var profit float64
 	var ratio float64
+
+	lastProfit, err := getValueFormFile()
+	if err != nil {
+		fmt.Println("ERROR")
+		fmt.Println(err)
+		fmt.Println("------------------")
+	}
+	fmt.Println("----->>> Last profit: ", lastProfit)
 
 	fmt.Print("Enter the revenue: ")
 	fmt.Scan(&revenue)
@@ -39,7 +52,7 @@ func profitCalculator() {
 	ebt = revenue - expenses
 	profit = ebt - (ebt * taxRate / 100)
 	ratio = profit / revenue * 100
-
+	wirteValueToFile(profit)
 	fmt.Println("Earnings before tax: ", ebt)
 	fmt.Println("Profit: ", profit)
 	fmt.Println("Profit ratio: ", ratio)
@@ -47,7 +60,6 @@ func profitCalculator() {
 }
 
 func investCalculator() {
-	const inflationRate = 2.5
 	var investmentAmount float64
 	var years float64
 	expectedReturnRate := 5.5
@@ -66,6 +78,21 @@ func investCalculator() {
 
 	futureValue := investmentAmount * math.Pow((1+expectedReturnRate/100), years)
 	futureRealValue := futureValue / math.Pow((1+inflationRate/100), years)
-	fmt.Println(futureValue)
+	fmt.Printf("Future value: %.2f\n", futureValue) // f is the float and .2 is the number of decimal places
+
 	fmt.Println(futureRealValue)
+}
+
+func main() {
+	var option int
+	fmt.Println("Choose an option: 1) Invest calculator 2) Profit calculator 3) Exit")
+	fmt.Scan(&option)
+
+	switch option {
+	case 1:
+		investCalculator()
+	case 2:
+		profitCalculator()
+	}
+
 }
