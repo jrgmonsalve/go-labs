@@ -1,1 +1,6 @@
 go 1.22.0
+
+use (
+	./udemy/2s_essentials
+	./udemy/3s_working_packages
+)
