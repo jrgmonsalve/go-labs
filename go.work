@@ -1,9 +1,11 @@
 go 1.22.0
 
 use (
+	./udemy/10s_concurrency
 	./udemy/2s_essentials
 	./udemy/3s_working_packages
 	./udemy/4s_pointers
 	./udemy/5s_structs
 	./udemy/6s_interfaces
+	./udemy/7s_arrays_slices_maps
 )
